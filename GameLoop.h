@@ -5,7 +5,7 @@
 class GameLoop
 {
 private:
-	SDL_Surface* _surface;
+	SDL_Renderer* _renderer;
 	SDL_Window* _window;
 public:
 	GameLoop(SDL_Window* window);
