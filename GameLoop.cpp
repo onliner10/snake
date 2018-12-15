@@ -2,6 +2,7 @@
 #include "GameLoop.h"
 #include "Snake.h"
 #include "KeyboardListener.h"
+#include <chrono>
 
 GameLoop::GameLoop(SDL_Window* window)
 {
@@ -27,8 +28,18 @@ void GameLoop::start() const
 	
 	SDL_Event event;
 	auto shouldQuit = false;
+	auto lastTick = std::chrono::system_clock::now();
+
+	// 60 FPS
+	auto tickInterval = std::chrono::duration<double, std::milli>(6 / 100);
+
 	while (!shouldQuit)
 	{
+		auto now = std::chrono::system_clock::now();
+		if((now - lastTick) < tickInterval)
+			return;
+		lastTick = now;
+
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:

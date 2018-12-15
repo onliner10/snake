@@ -7,15 +7,12 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 {
 	this->_renderer = renderer;
 	this->_viewPort = viewPort;
-	this->_currentDirection = RIGHT;
+	this->_currentDirection = LEFT;
 	this->_segmentWidth = segmentWidth;
 	this->_absSegmentWidth = scaleToWidth(_viewPort, _segmentWidth);
 
-	//horizontal
 	const auto startSegment = std::make_pair(scaleToViewPort(viewPort, 0.5, 0.5, 0.1, _segmentWidth), LEFT);
 
-	//vertical
-	//const auto startSegment = std::make_pair(scaleToViewPort(viewPort, 0.5, 0.5, 0.02, 0.1), UP);
 	this->_segments.push_back(startSegment);
 }
 
@@ -42,7 +39,10 @@ void Snake::goUp()
 void Snake::newSegment(Directions dir)
 {
 	const auto firstSegmentRect = this->_segments.front().first;
-
+	// TODO: not really shure if a bug or feature
+	/*if(firstSegmentRect.w < 2 * _absSegmentWidth && firstSegmentRect.h < 2 * _absSegmentWidth)
+		return;
+	*/
 	int x = firstSegmentRect.x;
 	int y = firstSegmentRect.y;
 
@@ -67,10 +67,10 @@ void Snake::newSegment(Directions dir)
 void Snake::tick()
 {
 	auto last = &this->_segments.back();
-	if (last->first.h < _absSegmentWidth || last->first.w < _absSegmentWidth)
+		
+	shrinkSegment(last);
+	if (last->first.h <= _absSegmentWidth && last->first.w <= _absSegmentWidth)
 		this->_segments.erase(this->_segments.end() - 1);
-	else
-		shrinkSegment(last);
 
 	auto first = &this->_segments.front();
 	enlargeSegment(first);
