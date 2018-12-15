@@ -10,6 +10,7 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 	this->_currentDirection = LEFT;
 	this->_segmentWidth = segmentWidth;
 	this->_absSegmentWidth = scaleToWidth(_viewPort, _segmentWidth);
+	this->_requestedDirection = NO_DIRECTION;
 
 	const auto startSegment = std::make_pair(scaleToViewPort(viewPort, 0.5, 0.5, 0.1, _segmentWidth), LEFT);
 
@@ -18,31 +19,28 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 
 void Snake::goLeft()
 {
-	newSegment(LEFT);
+	_requestedDirection = LEFT;
 }
 
 void Snake::goRight()
 {
-	newSegment(RIGHT);
+	_requestedDirection = RIGHT;
 }
 
 void Snake::goDown()
 {
-	newSegment(DOWN);
+	_requestedDirection = DOWN;
 }
 
 void Snake::goUp()
 {
-	newSegment(UP);
+	_requestedDirection = UP;
 }
 
 void Snake::newSegment(Directions dir)
 {
 	const auto firstSegmentRect = this->_segments.front().first;
-	// TODO: not really shure if a bug or feature
-	/*if(firstSegmentRect.w < 2 * _absSegmentWidth && firstSegmentRect.h < 2 * _absSegmentWidth)
-		return;
-	*/
+	
 	int x = firstSegmentRect.x;
 	int y = firstSegmentRect.y;
 
@@ -60,7 +58,6 @@ void Snake::newSegment(Directions dir)
 	);
 
 	this->_segments.insert(this->_segments.begin(), newSegment);
-	_currentDirection = dir;
 }
 
 
@@ -73,7 +70,17 @@ void Snake::tick()
 		this->_segments.erase(this->_segments.end() - 1);
 
 	auto first = &this->_segments.front();
+	auto firstRect = first->first;
 	enlargeSegment(first);
+
+	// TODO: not really shure if a bug or feature
+	if ((firstRect.w > 2 * _absSegmentWidth || firstRect.h > 2 * _absSegmentWidth) && _requestedDirection != NO_DIRECTION)
+	{
+		newSegment(_requestedDirection);
+		_currentDirection = _requestedDirection;
+		_requestedDirection = NO_DIRECTION;
+	}
+
 }
 
 void Snake::shrinkSegment(std::pair<struct SDL_Rect, Directions>* segment, int step)

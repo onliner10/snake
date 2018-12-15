@@ -9,6 +9,8 @@ private:
 	SDL_Renderer* _renderer;
 	SDL_Rect _viewPort{};
 	Direction _currentDirection;
+	Direction _requestedDirection;
+	
 	std::vector<std::pair<SDL_Rect, Direction>> _segments;
 	float _segmentWidth;
 	int _absSegmentWidth;

@@ -3,5 +3,6 @@ typedef enum Directions {
 	UP,
 	DOWN,
 	RIGHT,
-	LEFT
+	LEFT,
+	NO_DIRECTION
 } Direction;
