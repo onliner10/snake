@@ -14,9 +14,6 @@ GameLoop::~GameLoop()
 
 void GameLoop::start() const
 {
-	SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
-	SDL_RenderFillRect(_renderer, nullptr);
-
 	const auto windowSurface = SDL_GetWindowSurface(_window);
 	const SDL_Rect viewPort = { 0, 0, windowSurface->w, windowSurface->h};
 
@@ -27,9 +24,6 @@ void GameLoop::start() const
 	keyboardListener->registerKey(SDLK_RIGHT, [](Snake* s) { s->goRight(); });
 	keyboardListener->registerKey(SDLK_LEFT, [](Snake* s) { s->goLeft(); });
 
-	snake->draw();
-
-	SDL_RenderPresent(_renderer);
 	
 	SDL_Event event;
 	auto shouldQuit = false;
@@ -38,17 +32,21 @@ void GameLoop::start() const
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
 			case SDL_KEYDOWN:
-				printf("Key press detected\n");
 				keyboardListener->dispatch(event.key.keysym.sym);
 				break;
-
-			case SDL_KEYUP:
-				printf("Key release detected\n");
-				break;
-
 			default:
 				break;
 			}
 		}
+
+		SDL_RenderClear(_renderer);
+		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
+		SDL_RenderFillRect(_renderer, nullptr);
+
+		snake->tick();
+		snake->draw();
+
+		SDL_RenderPresent(_renderer);
+		SDL_Delay(20);
 	}
 }

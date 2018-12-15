@@ -162,6 +162,7 @@
     <ClInclude Include="KeyboardListener.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Snake.h" />
+    <ClInclude Include="ViewportHelper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="GameLoop.cpp" />
