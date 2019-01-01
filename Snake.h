@@ -21,9 +21,10 @@ private:
 	float _segmentWidth;
 	int _absSegmentWidth;
 
-	static void shrinkSegment(SnakeSegment* segment, int step = 5);
-	static void enlargeSegment(SnakeSegment* segment, int step = 5);
+	static void shrinkSegment(SnakeSegment* segment, int step = 11);
+	static void enlargeSegment(SnakeSegment* segment, int step = 11);
 	void newSegment(Directions dir);
+	void ShrinkTail();
 public:
 	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02);
 	void goLeft();
@@ -31,7 +32,8 @@ public:
 	void goDown();
 	void goUp();
 	int getLength();
-	
+
+	void ShrinkTail(SnakeSegment *& last);
 	void tick();
 	void draw();
 	~Snake();

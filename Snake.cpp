@@ -87,6 +87,25 @@ void Snake::newSegment(Directions dir)
 }
 
 
+void Snake::ShrinkTail()
+{
+	const auto last = &this->_segments.back();
+	const auto minDimension = std::min(last->rect.w, last->rect.h);
+	if (minDimension <= 0)
+	{
+		auto delta = abs(minDimension);
+		this->_segments.erase(this->_segments.end() - 1);
+		auto newLast = &this->_segments.back();
+		enlargeSegment(newLast, minDimension);
+	} else if(minDimension < _absSegmentWidth && last->rect.x > this->_viewPort.x && last->rect.y > this->_viewPort.y)
+	{
+		auto delta = abs(_absSegmentWidth - minDimension);
+		this->_segments.erase(this->_segments.end() - 1);
+		auto newLast = &this->_segments.back();
+		shrinkSegment(newLast, delta);
+	}
+}
+
 void Snake::tick()
 {
 	auto last = &this->_segments.back();
@@ -119,7 +138,7 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 
-	}
+	} 
 
 	auto firstRect = first->rect;
 	// TODO: not really shure if a bug or feature
@@ -130,21 +149,7 @@ void Snake::tick()
 		_requestedDirection = NO_DIRECTION;
 	}
 
-	last = &this->_segments.back();
-	const auto minDimension = std::min(last->rect.w, last->rect.h);
-	if (minDimension <= 0)
-	{
-		auto delta = abs(minDimension);
-		this->_segments.erase(this->_segments.end() - 1);
-		auto newLast = &this->_segments.back();
-		enlargeSegment(newLast, delta);
-	} else if(minDimension < _absSegmentWidth && last->rect.x > this->_viewPort.x && last->rect.y > this->_viewPort.y)
-	{
-		auto delta = abs(_absSegmentWidth - minDimension);
-		this->_segments.erase(this->_segments.end() - 1);
-		auto newLast = &this->_segments.back();
-		shrinkSegment(newLast, delta);
-	}
+	ShrinkTail();
 }
 
 void Snake::shrinkSegment(SnakeSegment* segment, int step)
