@@ -18,7 +18,7 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 
 void Snake::goLeft()
 {
-	if (this->_currentDirection != RIGHT)
+	if (this->_currentDirection != RIGHT && this->_currentDirection != LEFT)
 	{
 		_requestedDirection = LEFT;
 	}
@@ -26,7 +26,7 @@ void Snake::goLeft()
 
 void Snake::goRight()
 {
-	if (this->_currentDirection != LEFT)
+	if (this->_currentDirection != LEFT && this->_currentDirection != RIGHT)
 	{
 		_requestedDirection = RIGHT;
 	}
@@ -34,7 +34,7 @@ void Snake::goRight()
 
 void Snake::goDown()
 {
-	if (this->_currentDirection != UP)
+	if (this->_currentDirection != UP && this->_currentDirection != DOWN)
 	{
 		_requestedDirection = DOWN;
 	}
@@ -42,7 +42,7 @@ void Snake::goDown()
 
 void Snake::goUp()
 {
-	if (this->_currentDirection != DOWN)
+	if (this->_currentDirection != DOWN && this->_currentDirection != UP)
 	{
 		_requestedDirection = UP;
 	}
@@ -112,14 +112,9 @@ void Snake::ShrinkTail()
 	}
 }
 
-void Snake::tick()
+void Snake::MoveOutOfBoundsSegmentsIfAny()
 {
-	auto last = &this->_segments.back();
-	shrinkSegment(last);
-
 	auto first = &this->_segments.front();
-	enlargeSegment(first);
-
 	// escape left side	
 	if (first->rect.x < this->_viewPort.x)
 	{
@@ -133,7 +128,7 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 	}
-	// escape right
+		// escape right
 	else if (first->rect.x + first->rect.w > this->_viewPort.x + this->_viewPort.w)
 	{
 		auto xDiff = abs(this->_viewPort.x + this->_viewPort.w - first->rect.x - first->rect.w);
@@ -145,7 +140,7 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 	}
-	// escape up
+		// escape up
 	else if (first->rect.y < this->_viewPort.y)
 	{
 		auto yDiff = abs(this->_viewPort.y - first->rect.y);
@@ -158,7 +153,7 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 	}
-	// escape down
+		// escape down
 	else if (first->rect.y + first->rect.h > this->_viewPort.y + this->_viewPort.h)
 	{
 		auto yDiff = abs(this->_viewPort.y + this->_viewPort.h - first->rect.y - first->rect.h);
@@ -170,9 +165,16 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 	}
-	
+}
 
-	auto firstRect = first->rect;
+void Snake::tick()
+{
+	shrinkSegment(&this->_segments.back());
+	enlargeSegment(&this->_segments.front());
+
+	MoveOutOfBoundsSegmentsIfAny();
+
+	auto firstRect = static_cast<SnakeSegment*const>(&this->_segments.front())->rect;
 	// TODO: not really shure if a bug or feature
 	if ((firstRect.w > 2 * _absSegmentWidth || firstRect.h > 2 * _absSegmentWidth) && _requestedDirection !=
 		NO_DIRECTION)

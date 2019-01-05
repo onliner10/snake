@@ -25,6 +25,7 @@ private:
 	static void enlargeSegment(SnakeSegment* segment, int step = 11);
 	void newSegment(Directions dir);
 	void ShrinkTail();
+	void MoveOutOfBoundsSegmentsIfAny();
 public:
 	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02);
 	void goLeft();
