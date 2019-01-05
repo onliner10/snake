@@ -93,11 +93,13 @@ void Snake::ShrinkTail()
 	const auto minDimension = std::min(last->rect.w, last->rect.h);
 	if (minDimension <= 0)
 	{
-		auto delta = abs(minDimension);
 		this->_segments.erase(this->_segments.end() - 1);
 		auto newLast = &this->_segments.back();
 		enlargeSegment(newLast, minDimension);
-	} else if(minDimension < _absSegmentWidth && last->rect.x > this->_viewPort.x && last->rect.y > this->_viewPort.y)
+	} else if(minDimension < _absSegmentWidth 
+		&& last->rect.x > this->_viewPort.x 
+		&& last->rect.y > this->_viewPort.y 
+		&& last->rect.y + last->rect.h < this->_viewPort.y + this->_viewPort.h)
 	{
 		auto delta = abs(_absSegmentWidth - minDimension);
 		this->_segments.erase(this->_segments.end() - 1);
@@ -113,7 +115,8 @@ void Snake::tick()
 
 	auto first = &this->_segments.front();
 	enlargeSegment(first);
-	
+
+	// escape left side	
 	if(first->rect.x < this->_viewPort.x)
 	{
 		auto xDiff = abs(this->_viewPort.x - first->rect.x);
@@ -126,19 +129,35 @@ void Snake::tick()
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 
-	} else if (first->rect.y < this->_viewPort.y)
+	}
+	// escape up
+	else if (first->rect.y < this->_viewPort.y)
 	{
 		auto yDiff = abs(this->_viewPort.y - first->rect.y);
 		(&first->rect)->y = this->_viewPort.y;
 		(&first->rect)->h -= yDiff;
 
 		const SnakeSegment newSegment = {
-			SDL_Rect{ first->rect.x, this->_viewPort.y + this->_viewPort.h, _absSegmentWidth, yDiff}, UP
+			SDL_Rect{ first->rect.x, this->_viewPort.y + this->_viewPort.h - yDiff, _absSegmentWidth, yDiff}, UP
 		};
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
 
-	} 
+	}
+	 // escape down
+	 else if (first->rect.y + first->rect.h > this->_viewPort.y + this->_viewPort.h)
+	 {
+	 	auto yDiff = abs(this->_viewPort.y  + this->_viewPort.h - first->rect.y - first->rect.h);
+	 	// (&first->rect)->y = this->_viewPort.y + this->_viewPort.h;
+	 	(&first->rect)->h -= yDiff;
+	 
+	 	const SnakeSegment newSegment = {
+	 		SDL_Rect{ first->rect.x, this->_viewPort.y, _absSegmentWidth, yDiff}, DOWN
+	 	};
+	 
+	 	this->_segments.insert(this->_segments.begin(), newSegment);
+	 
+	 }
 
 	auto firstRect = first->rect;
 	// TODO: not really shure if a bug or feature
