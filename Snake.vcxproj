@@ -72,6 +72,8 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>$(SolutionDir)\ExternalLib\SDL2_ttf-2.0.14\include;$(SolutionDir)\ExternalLib\SDL2-2.0.9\include;$(SolutionDir)\ExternalLib\SDL2_gfx-1.0.4\include;$(IncludePath)</IncludePath>
+    <LibraryPath>$(SolutionDir)\ExternalLib\SDL2-2.0.9\lib\x86;$(SolutionDir)\ExternalLib\SDL2_ttf-2.0.14\lib\x86;$(SolutionDir)\ExternalLib\SDL2_gfx-1.0.4\lib\x86;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
@@ -97,7 +99,14 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>SDL2.lib;SDL2main.lib;SDL2_ttf.lib;SDL2_gfx.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <PostBuildEvent>
+      <Command>xcopy /y /d "$(SolutionDir)ExternalLib\SDL2-2.0.9\lib\x86\*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)ExternalLib\SDL2_gfx-1.0.4\lib\x86\*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)ExternalLib\SDL2_ttf-2.0.14\lib\x86\*.dll" "$(OutDir)"
+xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
@@ -159,15 +168,23 @@ xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Apple.h" />
+    <ClInclude Include="ApplesLayer.h" />
+    <ClInclude Include="Collidable.h" />
     <ClInclude Include="Direction.h" />
     <ClInclude Include="GameLoop.h" />
+    <ClInclude Include="Drawable.h" />
     <ClInclude Include="KeyboardListener.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Snake.h" />
     <ClInclude Include="ViewportHelper.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Apple.cpp" />
+    <ClCompile Include="ApplesLayer.cpp" />
+    <ClCompile Include="Collidable.cpp" />
     <ClCompile Include="GameLoop.cpp" />
+    <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

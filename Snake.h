@@ -2,6 +2,8 @@
 #include <SDL.h>
 #include "Direction.h"
 #include <vector>
+#include "Drawable.h"
+#include "Collidable.h"
 
 typedef struct
 {
@@ -9,23 +11,23 @@ typedef struct
 	Direction direction;
 } SnakeSegment;
 
-class Snake
+class Snake : Drawable, Collidable
 {
 private:
-	SDL_Renderer* _renderer;
-	SDL_Rect _viewPort{};
 	Direction _currentDirection;
 	Direction _requestedDirection;
 	
 	std::vector<SnakeSegment> _segments;
 	float _segmentWidth;
 	int _absSegmentWidth;
+	SDL_Rect _viewPort;
 
-	static void shrinkSegment(SnakeSegment* segment, int step = 4);
-	static void enlargeSegment(SnakeSegment* segment, int step = 4);
+	static void shrinkSegment(SnakeSegment* segment, int step = 6);
+	static void enlargeSegment(SnakeSegment* segment, int step = 6);
 	void newSegment(Directions dir);
 	void ShrinkTail();
 	void MoveOutOfBoundsSegmentsIfAny();
+	void ShrinkTail(SnakeSegment *& last);
 public:
 	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02);
 	void goLeft();
@@ -34,9 +36,9 @@ public:
 	void goUp();
 	int getLength();
 
-	void ShrinkTail(SnakeSegment *& last);
-	void tick();
-	void draw();
+	void tick() override;
+	void draw() override;
+	bool collidesWith(SDL_Rect* rect) override;
 	~Snake();
 };
 

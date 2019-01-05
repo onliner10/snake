@@ -1,5 +1,6 @@
 #include "pch.h"
 #include "GameLoop.h"
+#include "Apple.h"
 
 GameLoop::GameLoop(SDL_Window* window)
 {
@@ -42,6 +43,7 @@ void GameLoop::start() const
 	keyboardListener->registerKey(SDLK_RIGHT, [](Snake* s) { s->goRight(); });
 	keyboardListener->registerKey(SDLK_LEFT, [](Snake* s) { s->goLeft(); });
 
+	auto apple = new Apple(_renderer, 100, 100);
 	
 	SDL_Event event;
 	auto shouldQuit = false;
@@ -74,6 +76,7 @@ void GameLoop::start() const
 
 		snake->tick();
 		snake->draw();
+		apple->draw();
 
 		DrawDiagnosticsNumber(snake->getLength(),10,10);
 		DrawDiagnosticsNumber(1000 / duration.count(),100,10);

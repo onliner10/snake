@@ -4,8 +4,8 @@
 #include <algorithm>
 
 Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
+	:Drawable(renderer)
 {
-	this->_renderer = renderer;
 	this->_viewPort = viewPort;
 	this->_currentDirection = LEFT;
 	this->_segmentWidth = segmentWidth;
@@ -246,6 +246,12 @@ void Snake::draw()
 	{
 		SDL_RenderFillRect(_renderer, &segment.rect);
 	}
+}
+
+bool Snake::collidesWith(SDL_Rect* rect)
+{
+	const auto first = this->_segments.front();
+	return SDL_HasIntersection(rect, &first.rect);
 }
 
 Snake::~Snake()
