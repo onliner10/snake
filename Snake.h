@@ -21,8 +21,8 @@ private:
 	float _segmentWidth;
 	int _absSegmentWidth;
 
-	static void shrinkSegment(SnakeSegment* segment, int step = 11);
-	static void enlargeSegment(SnakeSegment* segment, int step = 11);
+	static void shrinkSegment(SnakeSegment* segment, int step = 4);
+	static void enlargeSegment(SnakeSegment* segment, int step = 4);
 	void newSegment(Directions dir);
 	void ShrinkTail();
 	void MoveOutOfBoundsSegmentsIfAny();

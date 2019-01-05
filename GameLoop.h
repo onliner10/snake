@@ -2,6 +2,10 @@
 #include <SDL.h>
 #include <memory>
 #include <SDL_ttf.h>
+#include "Snake.h"
+#include "KeyboardListener.h"
+#include <chrono>
+#include <string>
 
 class GameLoop
 {
@@ -12,7 +16,7 @@ private:
 public:
 	GameLoop(SDL_Window* window);
 	~GameLoop();
-	void DrawDiagnosticsNumber(int snakeLength) const;
+	void DrawDiagnosticsNumber(int snakeLength, int x, int y) const;
 
 	void start() const;
 };
