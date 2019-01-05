@@ -12,20 +12,21 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 	this->_absSegmentWidth = scaleToWidth(_viewPort, _segmentWidth);
 	this->_requestedDirection = NO_DIRECTION;
 
-	const SnakeSegment startSegment = { scaleToViewPort(viewPort, 0.5, 0.8, 0.2, _segmentWidth), LEFT };
+	const SnakeSegment startSegment = {scaleToViewPort(viewPort, 0.5, 0.8, 0.2, _segmentWidth), LEFT};
 	this->_segments.push_back(startSegment);
 }
 
 void Snake::goLeft()
 {
-	if (this->_currentDirection != RIGHT) {
+	if (this->_currentDirection != RIGHT)
+	{
 		_requestedDirection = LEFT;
 	}
 }
 
 void Snake::goRight()
 {
-	if(this->_currentDirection != LEFT)
+	if (this->_currentDirection != LEFT)
 	{
 		_requestedDirection = RIGHT;
 	}
@@ -33,7 +34,7 @@ void Snake::goRight()
 
 void Snake::goDown()
 {
-	if(this->_currentDirection != UP)
+	if (this->_currentDirection != UP)
 	{
 		_requestedDirection = DOWN;
 	}
@@ -41,7 +42,7 @@ void Snake::goDown()
 
 void Snake::goUp()
 {
-	if(this->_currentDirection != DOWN)
+	if (this->_currentDirection != DOWN)
 	{
 		_requestedDirection = UP;
 	}
@@ -52,10 +53,11 @@ int Snake::getLength()
 	auto res = 0;
 	for (auto segment = this->_segments.begin(); segment != this->_segments.end(); ++segment)
 	{
-		if(segment->direction == LEFT || segment->direction == RIGHT)
+		if (segment->direction == LEFT || segment->direction == RIGHT)
 		{
 			res += segment->rect.w;
-		} else
+		}
+		else
 		{
 			res += segment->rect.h;
 		}
@@ -66,21 +68,21 @@ int Snake::getLength()
 void Snake::newSegment(Directions dir)
 {
 	const auto firstSegmentRect = this->_segments.front().rect;
-	
+
 	int x = firstSegmentRect.x;
 	int y = firstSegmentRect.y;
 
-	if(_currentDirection == RIGHT)
+	if (_currentDirection == RIGHT)
 	{
 		x += firstSegmentRect.w - _absSegmentWidth;
 	}
-	if(_currentDirection == DOWN)
+	if (_currentDirection == DOWN)
 	{
 		y += firstSegmentRect.h - _absSegmentWidth;
 	}
 
 	const SnakeSegment newSegment = {
-		SDL_Rect{ x, y, _absSegmentWidth, _absSegmentWidth}, dir
+		SDL_Rect{x, y, _absSegmentWidth, _absSegmentWidth}, dir
 	};
 
 	this->_segments.insert(this->_segments.begin(), newSegment);
@@ -96,9 +98,11 @@ void Snake::ShrinkTail()
 		this->_segments.erase(this->_segments.end() - 1);
 		auto newLast = &this->_segments.back();
 		enlargeSegment(newLast, minDimension);
-	} else if(minDimension < _absSegmentWidth 
-		&& last->rect.x > this->_viewPort.x 
-		&& last->rect.y > this->_viewPort.y 
+	}
+	else if (minDimension < _absSegmentWidth
+		&& last->rect.x > this->_viewPort.x
+		&& last->rect.x + last->rect.w < this->_viewPort.x + this->_viewPort.w
+		&& last->rect.y > this->_viewPort.y
 		&& last->rect.y + last->rect.h < this->_viewPort.y + this->_viewPort.h)
 	{
 		auto delta = abs(_absSegmentWidth - minDimension);
@@ -117,18 +121,29 @@ void Snake::tick()
 	enlargeSegment(first);
 
 	// escape left side	
-	if(first->rect.x < this->_viewPort.x)
+	if (first->rect.x < this->_viewPort.x)
 	{
 		auto xDiff = abs(this->_viewPort.x - first->rect.x);
 		(&first->rect)->x = this->_viewPort.x;
 		(&first->rect)->w -= xDiff;
 
 		const SnakeSegment newSegment = {
-			SDL_Rect{ this->_viewPort.x + this->_viewPort.w - xDiff, first->rect.y, xDiff, _absSegmentWidth}, LEFT
+			SDL_Rect{this->_viewPort.x + this->_viewPort.w - xDiff, first->rect.y, xDiff, _absSegmentWidth}, LEFT
 		};
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
+	}
+	// escape right
+	else if (first->rect.x + first->rect.w > this->_viewPort.x + this->_viewPort.w)
+	{
+		auto xDiff = abs(this->_viewPort.x + this->_viewPort.w - first->rect.x - first->rect.w);
+		(&first->rect)->w -= xDiff;
 
+		const SnakeSegment newSegment = {
+			SDL_Rect{this->_viewPort.x, first->rect.y, xDiff, _absSegmentWidth}, RIGHT
+		};
+
+		this->_segments.insert(this->_segments.begin(), newSegment);
 	}
 	// escape up
 	else if (first->rect.y < this->_viewPort.y)
@@ -138,30 +153,29 @@ void Snake::tick()
 		(&first->rect)->h -= yDiff;
 
 		const SnakeSegment newSegment = {
-			SDL_Rect{ first->rect.x, this->_viewPort.y + this->_viewPort.h - yDiff, _absSegmentWidth, yDiff}, UP
+			SDL_Rect{first->rect.x, this->_viewPort.y + this->_viewPort.h - yDiff, _absSegmentWidth, yDiff}, UP
 		};
 
 		this->_segments.insert(this->_segments.begin(), newSegment);
-
 	}
-	 // escape down
-	 else if (first->rect.y + first->rect.h > this->_viewPort.y + this->_viewPort.h)
-	 {
-	 	auto yDiff = abs(this->_viewPort.y  + this->_viewPort.h - first->rect.y - first->rect.h);
-	 	// (&first->rect)->y = this->_viewPort.y + this->_viewPort.h;
-	 	(&first->rect)->h -= yDiff;
-	 
-	 	const SnakeSegment newSegment = {
-	 		SDL_Rect{ first->rect.x, this->_viewPort.y, _absSegmentWidth, yDiff}, DOWN
-	 	};
-	 
-	 	this->_segments.insert(this->_segments.begin(), newSegment);
-	 
-	 }
+	// escape down
+	else if (first->rect.y + first->rect.h > this->_viewPort.y + this->_viewPort.h)
+	{
+		auto yDiff = abs(this->_viewPort.y + this->_viewPort.h - first->rect.y - first->rect.h);
+		(&first->rect)->h -= yDiff;
+
+		const SnakeSegment newSegment = {
+			SDL_Rect{first->rect.x, this->_viewPort.y, _absSegmentWidth, yDiff}, DOWN
+		};
+
+		this->_segments.insert(this->_segments.begin(), newSegment);
+	}
+	
 
 	auto firstRect = first->rect;
 	// TODO: not really shure if a bug or feature
-	if ((firstRect.w > 2 * _absSegmentWidth || firstRect.h > 2 * _absSegmentWidth) && _requestedDirection != NO_DIRECTION)
+	if ((firstRect.w > 2 * _absSegmentWidth || firstRect.h > 2 * _absSegmentWidth) && _requestedDirection !=
+		NO_DIRECTION)
 	{
 		newSegment(_requestedDirection);
 		_currentDirection = _requestedDirection;
@@ -176,7 +190,7 @@ void Snake::shrinkSegment(SnakeSegment* segment, int step)
 	auto lastRect = &segment->rect;
 	const auto lastDir = segment->direction;
 
-	switch(lastDir)
+	switch (lastDir)
 	{
 	case LEFT:
 		lastRect->w -= step;
