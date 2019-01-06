@@ -18,6 +18,11 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth, int 
 	this->_segments.push_back(startSegment);
 }
 
+void Snake::onSelfCollision(std::function<void()> handler)
+{
+	_onSelfCollision = handler;
+}
+
 void Snake::goLeft()
 {
 	if (this->_currentDirection != RIGHT && this->_currentDirection != LEFT)
@@ -199,6 +204,17 @@ void Snake::tick()
 	}
 
 	ShrinkTail();
+
+	const auto headRect = &_segments.front().rect;
+	for (auto it = _segments.begin() + 1; it != _segments.end(); ++it) {
+		const auto currentRect = &(it->rect);
+		SDL_Rect intersection;
+		auto intersectionResult = SDL_IntersectRect(currentRect, headRect, &intersection);
+		if(intersectionResult == SDL_TRUE && (intersection.w != _absSegmentWidth || intersection.h != _absSegmentWidth)) 
+		{
+			_onSelfCollision();
+		}
+	}
 }
 
 void Snake::shrinkSegment(SnakeSegment* segment, int step)

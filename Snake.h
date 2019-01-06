@@ -4,6 +4,7 @@
 #include <vector>
 #include "Drawable.h"
 #include "Collidable.h"
+#include <functional>
 
 typedef struct
 {
@@ -23,8 +24,9 @@ private:
 	int _toGrow;
 	int _moveSpeed;
 	SDL_Rect _viewPort;
+	std::function<void(void)> _onSelfCollision;
 
-	static void shrinkSegment(SnakeSegment* segment, int step);
+		static void shrinkSegment(SnakeSegment* segment, int step);
 	static void enlargeSegment(SnakeSegment* segment, int step);
 	void newSegment(Directions dir);
 	void ShrinkTail();
@@ -32,6 +34,7 @@ private:
 	void ShrinkTail(SnakeSegment *& last);
 public:
 	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02, int moveSpeed = 4);
+	void onSelfCollision(std::function<void(void)> handler);
 	void goLeft();
 	void goRight();
 	void goDown();

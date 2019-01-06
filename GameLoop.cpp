@@ -38,6 +38,15 @@ void GameLoop::start() const
 	const SDL_Rect viewPort = { 0, 0, windowSurface->w, windowSurface->h};
 
 	auto snake = new Snake(_renderer, viewPort);
+	snake->onSelfCollision([=]() 
+	{
+		while(true)
+		{
+			SDL_RenderClear(_renderer);
+			DrawDiagnosticsNumber(1001, 100, 100);
+			SDL_RenderPresent(_renderer);
+		}
+	});
 	auto keyboardListener = new KeyboardListener<Snake>(snake);
 	keyboardListener->registerKey(SDLK_DOWN, [](Snake* s) { s->goDown();});
 	keyboardListener->registerKey(SDLK_UP, [](Snake* s) { s->goUp(); });
