@@ -27,9 +27,9 @@ void GameLayer::onGameOver(std::function<void(int)> handler)
 
 void GameLayer::reset()
 {
-	if (_snake != nullptr) delete _snake;
-	if (_keyboard != nullptr) delete _keyboard;
-	if(_applesLayer != nullptr) delete _applesLayer;
+	delete _snake;
+	delete _keyboard;
+	delete _applesLayer;
 
 	this->_snake = new Snake(_renderer, _viewPort);
 	_snake->onSelfCollision([this]()

@@ -209,7 +209,7 @@ void Snake::tick()
 	for (auto it = _segments.begin() + 1; it != _segments.end(); ++it) {
 		const auto currentRect = &(it->rect);
 		SDL_Rect intersection;
-		auto intersectionResult = SDL_IntersectRect(currentRect, headRect, &intersection);
+		const auto intersectionResult = SDL_IntersectRect(currentRect, headRect, &intersection);
 		if(intersectionResult == SDL_TRUE && (intersection.w != _absSegmentWidth || intersection.h != _absSegmentWidth)) 
 		{
 			_onSelfCollision();
