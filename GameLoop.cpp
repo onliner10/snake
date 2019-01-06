@@ -2,6 +2,7 @@
 #include "GameLoop.h"
 #include "Apple.h"
 #include "ApplesLayer.h"
+#include "GameLayer.h"
 
 GameLoop::GameLoop(SDL_Window* window)
 {
@@ -37,31 +38,8 @@ void GameLoop::start() const
 	const auto windowSurface = SDL_GetWindowSurface(_window);
 	const SDL_Rect viewPort = { 0, 0, windowSurface->w, windowSurface->h};
 
-	int apples = 0;
-
-	auto snake = new Snake(_renderer, viewPort);
-	snake->onSelfCollision([=]() 
-	{
-		while(true)
-		{
-			SDL_RenderClear(_renderer);
-			DrawDiagnosticsNumber(1001, 100, 100);
-			SDL_RenderPresent(_renderer);
-		}
-	});
-	auto keyboardListener = new KeyboardListener<Snake>(snake);
-	keyboardListener->registerKey(SDLK_DOWN, [](Snake* s) { s->goDown();});
-	keyboardListener->registerKey(SDLK_UP, [](Snake* s) { s->goUp(); });
-	keyboardListener->registerKey(SDLK_RIGHT, [](Snake* s) { s->goRight(); });
-	keyboardListener->registerKey(SDLK_LEFT, [](Snake* s) { s->goLeft(); });
-
-	auto appleLayer = new ApplesLayer(_renderer, viewPort, snake, 0.01f, [snake, &apples]()
-	{
-		snake->growBy();
-		apples++;
-	});
+	auto gameLayer = new GameLayer(_renderer, viewPort);
 	
-	SDL_Event event;
 	auto shouldQuit = false;
 	auto lastTick = std::chrono::system_clock::now();
 
@@ -76,26 +54,13 @@ void GameLoop::start() const
 			continue;
 		lastTick = now;
 
-		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-			case SDL_KEYDOWN:
-				keyboardListener->dispatch(event.key.keysym.sym);
-				break;
-			default:
-				break;
-			}
-		}
-
 		SDL_RenderClear(_renderer);
 		SDL_SetRenderDrawColor(_renderer, 0, 0, 0, SDL_ALPHA_OPAQUE);
 		SDL_RenderFillRect(_renderer, nullptr);
 
-		snake->tick();
-		snake->draw();
-		appleLayer->tick();
-		appleLayer->draw();
+		gameLayer->tick();
+		gameLayer->draw();
 
-		DrawDiagnosticsNumber(apples,10,10);
 		DrawDiagnosticsNumber(1000 / duration.count(),100,10);
 
 		SDL_RenderPresent(_renderer);

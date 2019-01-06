@@ -172,6 +172,7 @@ xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
     <ClInclude Include="ApplesLayer.h" />
     <ClInclude Include="Collidable.h" />
     <ClInclude Include="Direction.h" />
+    <ClInclude Include="GameLayer.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="Drawable.h" />
     <ClInclude Include="KeyboardListener.h" />
@@ -183,6 +184,7 @@ xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
     <ClCompile Include="Apple.cpp" />
     <ClCompile Include="ApplesLayer.cpp" />
     <ClCompile Include="Collidable.cpp" />
+    <ClCompile Include="GameLayer.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="Drawable.cpp" />
     <ClCompile Include="pch.cpp">
