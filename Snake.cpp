@@ -2,6 +2,7 @@
 #include "Snake.h"
 #include "ViewportHelper.h"
 #include <algorithm>
+#include <SDL2_gfxPrimitives.h>
 
 Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth, int moveSpeed)
 	:Drawable(renderer)
@@ -269,6 +270,30 @@ void Snake::enlargeSegment(SnakeSegment* segment, int step)
 	}
 }
 
+void Snake::drawHead()
+{
+	auto const first = _segments.front();
+
+	const auto headColor = 0xff000048;
+	const auto xProp = 0.55;
+	const auto yProp = 0.75;
+	switch(_currentDirection)
+	{
+	case UP:
+		filledEllipseColor(_renderer, first.rect.x+0.5 * _absSegmentWidth, first.rect.y, _absSegmentWidth * xProp, yProp * _absSegmentWidth, headColor);
+		break;
+	case DOWN:
+		filledEllipseColor(_renderer, first.rect.x+ 0.5 * _absSegmentWidth, first.rect.y + first.rect.h + 0.5 * _absSegmentWidth, _absSegmentWidth * xProp, yProp * _absSegmentWidth, headColor);
+		break;
+	case LEFT:
+		filledEllipseColor(_renderer, first.rect.x, first.rect.y + 0.5 * _absSegmentWidth, _absSegmentWidth * yProp, xProp * _absSegmentWidth, headColor);
+		break;
+	case RIGHT:
+		filledEllipseColor(_renderer, first.rect.x+first.rect.w, first.rect.y + 0.5 * _absSegmentWidth, _absSegmentWidth * yProp, xProp * _absSegmentWidth, headColor);
+		break;
+	}
+}
+
 void Snake::draw()
 {
 	SDL_SetRenderDrawColor(_renderer, 100, 0, 0, SDL_ALPHA_OPAQUE);
@@ -276,6 +301,8 @@ void Snake::draw()
 	{
 		SDL_RenderFillRect(_renderer, &segment.rect);
 	}
+
+	drawHead();
 }
 
 bool Snake::collidesWith(SDL_Rect* rect)

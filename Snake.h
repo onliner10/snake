@@ -28,18 +28,19 @@ private:
 
 	static void shrinkSegment(SnakeSegment* segment, int step);
 	static void enlargeSegment(SnakeSegment* segment, int step);
+	void drawHead();
 	void newSegment(Directions dir);
 	void ShrinkTail();
 	void MoveOutOfBoundsSegmentsIfAny();
 	void ShrinkTail(SnakeSegment *& last);
 public:
-	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02, int moveSpeed = 4);
+	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02, int moveSpeed = 6);
 	void onSelfCollision(std::function<void(void)> handler);
 	void goLeft();
 	void goRight();
 	void goDown();
 	void goUp();
-	void growBy(float step = 0.08);
+	void growBy(float step = 0.1);
 	int getLength();
 
 	void tick() override;
