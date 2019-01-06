@@ -26,7 +26,7 @@ private:
 	SDL_Rect _viewPort;
 	std::function<void(void)> _onSelfCollision;
 
-		static void shrinkSegment(SnakeSegment* segment, int step);
+	static void shrinkSegment(SnakeSegment* segment, int step);
 	static void enlargeSegment(SnakeSegment* segment, int step);
 	void newSegment(Directions dir);
 	void ShrinkTail();
@@ -39,7 +39,7 @@ public:
 	void goRight();
 	void goDown();
 	void goUp();
-	void growBy(float step = 0.06);
+	void growBy(float step = 0.08);
 	int getLength();
 
 	void tick() override;

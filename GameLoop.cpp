@@ -37,6 +37,8 @@ void GameLoop::start() const
 	const auto windowSurface = SDL_GetWindowSurface(_window);
 	const SDL_Rect viewPort = { 0, 0, windowSurface->w, windowSurface->h};
 
+	int apples = 0;
+
 	auto snake = new Snake(_renderer, viewPort);
 	snake->onSelfCollision([=]() 
 	{
@@ -53,14 +55,18 @@ void GameLoop::start() const
 	keyboardListener->registerKey(SDLK_RIGHT, [](Snake* s) { s->goRight(); });
 	keyboardListener->registerKey(SDLK_LEFT, [](Snake* s) { s->goLeft(); });
 
-	auto appleLayer = new ApplesLayer(_renderer, viewPort, snake, 0.01f, [snake]() { snake->growBy(); });
+	auto appleLayer = new ApplesLayer(_renderer, viewPort, snake, 0.01f, [snake, &apples]()
+	{
+		snake->growBy();
+		apples++;
+	});
 	
 	SDL_Event event;
 	auto shouldQuit = false;
 	auto lastTick = std::chrono::system_clock::now();
 
 	// 60 FPS
-	auto tickInterval = std::chrono::duration<double, std::milli>(1000 / 60);
+	const auto tickInterval = std::chrono::duration<double, std::milli>(1000 / 60);
 
 	while (!shouldQuit)
 	{
@@ -89,7 +95,7 @@ void GameLoop::start() const
 		appleLayer->tick();
 		appleLayer->draw();
 
-		DrawDiagnosticsNumber(snake->getLength(),10,10);
+		DrawDiagnosticsNumber(apples,10,10);
 		DrawDiagnosticsNumber(1000 / duration.count(),100,10);
 
 		SDL_RenderPresent(_renderer);
