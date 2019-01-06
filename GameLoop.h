@@ -6,17 +6,19 @@
 #include "KeyboardListener.h"
 #include <chrono>
 #include <string>
+#include "GameLayer.h"
+#include "GameoverLayer.h"
 
 class GameLoop
 {
 private:
 	SDL_Renderer* _renderer;
 	SDL_Window* _window;
-	TTF_Font* _font;
+	mutable Drawable* _activeLayer;
+	mutable bool _gameOver;
 public:
 	GameLoop(SDL_Window* window);
 	~GameLoop();
-	void DrawDiagnosticsNumber(int snakeLength, int x, int y) const;
 
 	void start() const;
 };

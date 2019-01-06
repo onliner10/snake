@@ -14,7 +14,7 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth, int 
 	this->_toGrow = 0;
 	this->_moveSpeed = moveSpeed;
 
-	const SnakeSegment startSegment = {scaleToViewPort(viewPort, 0.5, 0.8, 0.2, _segmentWidth), LEFT};
+	const SnakeSegment startSegment = {scaleToViewPort(viewPort, 0.5, 0.5, 0.2, _segmentWidth), LEFT};
 	this->_segments.push_back(startSegment);
 }
 

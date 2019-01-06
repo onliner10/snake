@@ -175,6 +175,7 @@ xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
     <ClInclude Include="GameLayer.h" />
     <ClInclude Include="GameLoop.h" />
     <ClInclude Include="Drawable.h" />
+    <ClInclude Include="GameoverLayer.h" />
     <ClInclude Include="KeyboardListener.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Snake.h" />
@@ -187,6 +188,7 @@ xcopy /y /d "$(SolutionDir)Resources\*.*" "$(OutDir)"</Command>
     <ClCompile Include="GameLayer.cpp" />
     <ClCompile Include="GameLoop.cpp" />
     <ClCompile Include="Drawable.cpp" />
+    <ClCompile Include="GameoverLayer.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

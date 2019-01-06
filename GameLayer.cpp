@@ -5,14 +5,34 @@ GameLayer::GameLayer(SDL_Renderer* renderer, SDL_Rect viewPort)
 	:Drawable(renderer)
 {
 	this->_viewPort = viewPort;
+	reset();
+
+	_onGameOver = [](int x) {};
+}
+
+
+GameLayer::~GameLayer()
+{
+	delete _snake;
+	delete _keyboard;
+	delete _applesLayer;
+}
+
+void GameLayer::onGameOver(std::function<void(int)> handler)
+{
+	_onGameOver = handler;
+}
+
+void GameLayer::reset()
+{
+	if (_snake != nullptr) delete _snake;
+	if (_keyboard != nullptr) delete _keyboard;
+	if(_applesLayer != nullptr) delete _applesLayer;
+
 	this->_snake = new Snake(_renderer, _viewPort);
-	_snake->onSelfCollision([=]() 
+	_snake->onSelfCollision([this]()
 	{
-		while(true)
-		{
-			SDL_RenderClear(_renderer);
-			SDL_RenderPresent(_renderer);
-		}
+		_onGameOver(_score);
 	});
 
 	_keyboard = new KeyboardListener<Snake>(_snake);
@@ -23,16 +43,10 @@ GameLayer::GameLayer(SDL_Renderer* renderer, SDL_Rect viewPort)
 
 	_applesLayer = new ApplesLayer(_renderer, _viewPort, _snake, 0.01f, [this]()
 	{
+		_score++;
 		_snake->growBy();
 	});
-}
-
-
-GameLayer::~GameLayer()
-{
-	delete _snake;
-	delete _keyboard;
-	delete _applesLayer;
+	_score = 0;
 }
 
 void GameLayer::tick()
