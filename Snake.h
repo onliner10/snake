@@ -20,20 +20,23 @@ private:
 	std::vector<SnakeSegment> _segments;
 	float _segmentWidth;
 	int _absSegmentWidth;
+	int _toGrow;
+	int _moveSpeed;
 	SDL_Rect _viewPort;
 
-	static void shrinkSegment(SnakeSegment* segment, int step = 4);
-	static void enlargeSegment(SnakeSegment* segment, int step = 4);
+	static void shrinkSegment(SnakeSegment* segment, int step);
+	static void enlargeSegment(SnakeSegment* segment, int step);
 	void newSegment(Directions dir);
 	void ShrinkTail();
 	void MoveOutOfBoundsSegmentsIfAny();
 	void ShrinkTail(SnakeSegment *& last);
 public:
-	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02);
+	Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth = 0.02, int moveSpeed = 4);
 	void goLeft();
 	void goRight();
 	void goDown();
 	void goUp();
+	void growBy(float step = 0.06);
 	int getLength();
 
 	void tick() override;

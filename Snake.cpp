@@ -3,7 +3,7 @@
 #include "ViewportHelper.h"
 #include <algorithm>
 
-Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
+Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth, int moveSpeed)
 	:Drawable(renderer)
 {
 	this->_viewPort = viewPort;
@@ -11,6 +11,8 @@ Snake::Snake(SDL_Renderer* renderer, SDL_Rect viewPort, float segmentWidth)
 	this->_segmentWidth = segmentWidth;
 	this->_absSegmentWidth = scaleToWidth(_viewPort, _segmentWidth);
 	this->_requestedDirection = NO_DIRECTION;
+	this->_toGrow = 0;
+	this->_moveSpeed = moveSpeed;
 
 	const SnakeSegment startSegment = {scaleToViewPort(viewPort, 0.5, 0.8, 0.2, _segmentWidth), LEFT};
 	this->_segments.push_back(startSegment);
@@ -46,6 +48,12 @@ void Snake::goUp()
 	{
 		_requestedDirection = UP;
 	}
+}
+
+void Snake::growBy(float step)
+{
+	const auto growthAbsolute = scaleToWidth(_viewPort, step);
+	_toGrow = growthAbsolute;
 }
 
 int Snake::getLength()
@@ -169,8 +177,14 @@ void Snake::MoveOutOfBoundsSegmentsIfAny()
 
 void Snake::tick()
 {
-	shrinkSegment(&this->_segments.back());
-	enlargeSegment(&this->_segments.front());
+	if(_toGrow > 0)
+	{
+		_toGrow -= _moveSpeed;
+	} else
+	{
+		shrinkSegment(&this->_segments.back(), _moveSpeed);
+	}
+	enlargeSegment(&this->_segments.front(), _moveSpeed);
 
 	MoveOutOfBoundsSegmentsIfAny();
 
@@ -250,8 +264,15 @@ void Snake::draw()
 
 bool Snake::collidesWith(SDL_Rect* rect)
 {
-	const auto first = this->_segments.front();
-	return SDL_HasIntersection(rect, &first.rect);
+	for(auto segment : this->_segments)
+	{
+		if(SDL_HasIntersection(rect, &segment.rect))
+		{
+			return true;
+		}
+	}
+
+	return false;
 }
 
 Snake::~Snake()

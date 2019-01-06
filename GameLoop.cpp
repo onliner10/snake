@@ -44,7 +44,7 @@ void GameLoop::start() const
 	keyboardListener->registerKey(SDLK_RIGHT, [](Snake* s) { s->goRight(); });
 	keyboardListener->registerKey(SDLK_LEFT, [](Snake* s) { s->goLeft(); });
 
-	auto appleLayer = new ApplesLayer(_renderer, viewPort, snake, 0.01f, [snake]() { snake->goLeft(); });
+	auto appleLayer = new ApplesLayer(_renderer, viewPort, snake, 0.01f, [snake]() { snake->growBy(); });
 	
 	SDL_Event event;
 	auto shouldQuit = false;
