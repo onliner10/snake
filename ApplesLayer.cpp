@@ -22,8 +22,8 @@ void ApplesLayer::tick()
 	const auto absApplewidth = scaleToWidth(_viewPort, _appleWidth);
 	while (_apple == nullptr)
 	{
-		auto x = rand() % (_viewPort.w - _viewPort.x - 2*absApplewidth) + _viewPort.x;
-		auto y = rand() % (_viewPort.h - _viewPort.y - 2*absApplewidth) + _viewPort.y;
+		auto x = rand() % (_viewPort.w - _viewPort.x - 2*absApplewidth) + _viewPort.x * absApplewidth;
+		auto y = rand() % (_viewPort.h - _viewPort.y - 2*absApplewidth) + _viewPort.y + absApplewidth;
 		_apple = new Apple(_renderer, x, y, absApplewidth);
 
 		if (_snake->collidesWith(&_apple->collisionRect()))

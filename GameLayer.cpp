@@ -4,7 +4,9 @@
 GameLayer::GameLayer(SDL_Renderer* renderer, SDL_Rect viewPort)
 	:Drawable(renderer)
 {
+	if (!TTF_WasInit()) { TTF_Init(); }
 	this->_viewPort = viewPort;
+	this->_font = TTF_OpenFont("c:/windows/fonts/arial.ttf", viewPort.h * 0.03);
 	reset();
 
 	_onGameOver = [](int x) {};
@@ -70,4 +72,18 @@ void GameLayer::draw()
 {
 	_snake->draw();
 	_applesLayer->draw();
+
+	SDL_Color White = { 255, 255, 255 };  
+
+	SDL_Surface* textSurface = TTF_RenderText_Blended(_font, std::to_string(_score).c_str(), White);
+	SDL_Texture* textTexture = SDL_CreateTextureFromSurface(_renderer, textSurface);
+	SDL_Rect Message_rect;
+	Message_rect.x = _viewPort.x + 0.01 * _viewPort.w; 
+	Message_rect.y = _viewPort.y + 0.01 * _viewPort.h; 
+	Message_rect.w = textSurface->w; 
+	Message_rect.h = textSurface->h; 
+
+	SDL_RenderCopy(_renderer, textTexture, NULL, &Message_rect);
+	SDL_FreeSurface(textSurface);
+	SDL_DestroyTexture(textTexture);
 }

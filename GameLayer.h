@@ -15,6 +15,7 @@ private:
 	KeyboardListener<Snake>* _keyboard;
 	ApplesLayer* _applesLayer;
 	std::function<void(int)> _onGameOver;
+	TTF_Font* _font;
 public:
 	GameLayer(SDL_Renderer* renderer, SDL_Rect viewPort);
 	~GameLayer();
