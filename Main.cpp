@@ -8,8 +8,13 @@
 int main(int argc, char* args[]) {
 	fprintf(stdout, "Starting snake ...\n");
 
-	const auto screenWidth = std::stoi(args[1]);
-	const auto screenHeight = std::stoi(args[2]);
+	auto screenWidth = 800;
+	auto screenHeight = 600;
+	if(argc >= 3)
+	{
+		screenWidth = std::stoi(args[1]);
+		screenHeight = std::stoi(args[2]);
+	}
 
 	fprintf(stdout, "Using resolution %dx%d", screenWidth, screenHeight);
 
