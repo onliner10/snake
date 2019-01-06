@@ -30,6 +30,8 @@ int main(int argc, char* args[]) {
 		return 1;
 	}
 
+	srand(time(NULL));
+
 	const std::unique_ptr<GameLoop> gameLoop(new GameLoop(window));
 	gameLoop->start();
 

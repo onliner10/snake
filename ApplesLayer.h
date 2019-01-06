@@ -3,14 +3,18 @@
 #include <vector>
 #include "Apple.h"
 #include "Collidable.h"
+#include <functional>
 
 class ApplesLayer : Drawable
 {
 private:
-	std::vector<Apple> _apples;
-	Collidable _snake;
+	Apple* _apple;
+	SDL_Rect _viewPort;
+	Collidable* _snake;
+	float _appleWidth;
+	std::function<void()> _onCollision;
 public:
-	ApplesLayer(SDL_Renderer* renderer, Collidable snake);
+	ApplesLayer(SDL_Renderer* renderer, SDL_Rect viewPort, Collidable* snake, float appleWidth, std::function<void(void)> onCollision);
 	~ApplesLayer();
 	void tick() override;
 	void draw() override;

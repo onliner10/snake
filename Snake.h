@@ -11,7 +11,7 @@ typedef struct
 	Direction direction;
 } SnakeSegment;
 
-class Snake : Drawable, Collidable
+class Snake : Drawable, public Collidable
 {
 private:
 	Direction _currentDirection;
@@ -22,8 +22,8 @@ private:
 	int _absSegmentWidth;
 	SDL_Rect _viewPort;
 
-	static void shrinkSegment(SnakeSegment* segment, int step = 6);
-	static void enlargeSegment(SnakeSegment* segment, int step = 6);
+	static void shrinkSegment(SnakeSegment* segment, int step = 4);
+	static void enlargeSegment(SnakeSegment* segment, int step = 4);
 	void newSegment(Directions dir);
 	void ShrinkTail();
 	void MoveOutOfBoundsSegmentsIfAny();
